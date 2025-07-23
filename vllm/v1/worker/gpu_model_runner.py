@@ -42,6 +42,7 @@ from vllm.multimodal.utils import group_mm_inputs_by_modality
 from vllm.pooling_params import PoolingParams, PoolingTask
 from vllm.sampling_params import SamplingType
 from vllm.sequence import IntermediateTensors
+from vllm.swizzle_tensor import swizzlfy
 from vllm.utils import (STR_DTYPE_TO_TORCH_DTYPE, DeviceMemoryProfiler,
                         GiB_bytes, LazyLoader, check_use_alibi, get_dtype_size,
                         is_pin_memory_available, round_up)
@@ -2350,6 +2351,9 @@ class GPUModelRunner(LoRAModelRunnerMixin):
         del hidden_states, output
         self.encoder_cache.clear()
         gc.collect()
+
+    def init_swizzle_tensor(self) -> None:
+        swizzlfy(self.model)
 
     def capture_model(self) -> None:
         if not self.use_cuda_graph:
