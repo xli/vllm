@@ -15,3 +15,15 @@ serve:
 request:
 	curl -X POST http://localhost:8000/v1/chat/completions -H "Content-Type: application/json" \
 		-d '{"messages": [{"role": "user", "content": "Hello, vLLM!"}],"max_tokens": 100}' | jq .
+
+
+benchmark:
+	vllm bench serve \
+		--model meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8 \
+		--host 127.0.0.1 \
+		--dataset-name random \
+		--ignore-eos \
+		--num-prompts 640 \
+		--random-input-len 10000 \
+		--random-output-len 1000 \
+		--max-concurrency 64
