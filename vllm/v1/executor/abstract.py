@@ -76,9 +76,6 @@ class Executor(ExecutorBase):
         output = self.collective_rpc("determine_available_memory")
         return output
 
-    def init_swizzle_tensor(self) -> None:
-        self.collective_rpc("init_swizzle_tensor")
-
     def get_kv_cache_specs(self) -> list[dict[str, KVCacheSpec]]:
         output = self.collective_rpc("get_kv_cache_spec")
         return output

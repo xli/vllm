@@ -22,16 +22,18 @@ def swizzle_op_weights(
         logger.info("Parameter data shape: %s", x.data.shape)
         x = torch.nn.Parameter(SwizzleTensor(x.data.contiguous()))
     elif isinstance(x, (RowParallelLinear, ColumnParallelLinear)):
-        for name, p in x.named_parameters():
-            logger.info("name: %s, type: %s", name, type(p))
         assert isinstance(x.weight, torch.nn.Parameter)
-        swizzle_op_weights(x.weight)
+        weight = x.weight
+        del x.weight
+        # need copy attrs from x to new parameter
+        x.register_parameter("weight", swizzle_op_weights(weight))
     else:
         raise RuntimeError(f"Unrecognized weight type {type(x)}")
     return x
 
 
 def swizzlfy_llama_mlp(m: nn.Module) -> None:
+    # both are attributes of LlamaMLP
     # w13 => language_model.model.layers.\1.feed_forward.gate_up_proj.weight
     m.gate_up_proj = swizzle_op_weights(m.gate_up_proj)
     # w2 => language_model.model.layers.\1.feed_forward.down_proj.weight

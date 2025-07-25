@@ -134,10 +134,6 @@ class EngineCore:
                         self.batch_queue_size)
             self.batch_queue = queue.Queue(self.batch_queue_size)
 
-        if os.getenv("VLLM_SWIZZLE_TENSOR") == "1":
-            logger.info("Swizzling tensor is enabled")
-            self.model_executor.init_swizzle_tensor()
-
     def _initialize_kv_caches(
             self, vllm_config: VllmConfig) -> tuple[int, int, KVCacheConfig]:
         start = time.time()

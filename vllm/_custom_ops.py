@@ -244,6 +244,18 @@ def convert_vertical_slash_indexes_mergehead(
     return block_count, block_offset, column_count, column_index
 
 
+@register_fake("_C::rotary_embedding")
+def rotary_embedding_fake(
+    positions: torch.Tensor,
+    query: torch.Tensor,
+    key: Optional[torch.Tensor],
+    head_size: int,
+    cos_sin_cache: torch.Tensor,
+    is_neox: bool,
+) -> None:
+    return None
+
+
 # pos encoding ops
 def rotary_embedding(
     positions: torch.Tensor,

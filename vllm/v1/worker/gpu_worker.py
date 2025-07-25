@@ -197,9 +197,6 @@ class Worker(WorkerBase):
     def update_config(self, overrides: dict[str, Any]) -> None:
         self.model_runner.update_config(overrides)
 
-    def init_swizzle_tensor(self) -> None:
-        self.model_runner.init_swizzle_tensor()
-
     @torch.inference_mode()
     def determine_available_memory(self) -> int:
         """Profiles the peak memory usage of the model to determine how much 
@@ -269,6 +266,10 @@ class Worker(WorkerBase):
             self.model_runner.initialize_kv_cache(kv_cache_config)
 
     def compile_or_warm_up_model(self) -> None:
+        if os.getenv("VLLM_SWIZZLE_TENSOR") == "1":
+            logger.info("Swizzling tensor is enabled")
+            self.model_runner.init_swizzle_tensor()
+
         # warm up sizes that are not in cudagraph capture sizes,
         # but users still want to compile for better performance,
         # e.g. for the max-num-batched token size in chunked prefill.
