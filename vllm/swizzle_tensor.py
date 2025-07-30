@@ -11,6 +11,7 @@ from torchao.swizzle.swizzle_tensor import SwizzleTensor
 from vllm.logger import init_logger
 from vllm.model_executor.layers.linear import (ColumnParallelLinear,
                                                RowParallelLinear)
+from vllm.model_executor.utils import set_weight_attrs
 
 logger = init_logger(__name__)
 
@@ -25,8 +26,11 @@ def swizzle_op_weights(
         assert isinstance(x.weight, torch.nn.Parameter)
         weight = x.weight
         del x.weight
-        # need copy attrs from x to new parameter
-        x.register_parameter("weight", swizzle_op_weights(weight))
+        new_weight = swizzle_op_weights(weight)
+        # see vllm/model_executor/layers/linear.py
+        # UnquantizedLinearMethod#create_weights
+        set_weight_attrs(new_weight, {"input_dim": 1, "output_dim": 0})
+        x.register_parameter("weight", new_weight)
     else:
         raise RuntimeError(f"Unrecognized weight type {type(x)}")
     return x
