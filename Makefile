@@ -15,7 +15,7 @@ serve-l4:
 	VLLM_FP8_PADDING=1 \
 	SAFETENSORS_FAST_GPU=1 \
 	VLLM_USE_V1=$(v) \
-	vllm serve meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8 -tp 8 --disable-log-requests | tee /tmp/vllm-l4.log
+	vllm serve meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8 -tp 8 --disable-log-requests --kv_cache_dtype fp8 | tee /tmp/vllm-l4.log
 
 serve-ds: v=1
 serve-ds:
@@ -79,5 +79,7 @@ benchmark:
 		--max-concurrency $(cc)
 
 pyspy: pid=3805529
+pyspy: rate=80
+pyspy: duration=120
 pyspy:
-	py-spy record -p $(pid)  -o pyspy.svg -d 60 -r 50
+	py-spy record -p $(pid)  -o pyspy-$(duration)-$(rate).svg -d $(duration) -r $(rate)
