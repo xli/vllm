@@ -1,0 +1,57 @@
+[build-system]
+# Should be mirrored in requirements/build.txt
+requires = [
+    "cmake>=3.26.1",
+    "ninja",
+    "packaging>=24.2",
+    "setuptools>=77.0.3,<80.0.0",
+    "setuptools-scm>=8.0",
+    "torch==2.7.1",
+    "wheel",
+    "jinja2",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vllm-kernels"
+authors = [{name = "vLLM Team"}]
+license = "Apache-2.0"
+license-files = ["./../LICENSE"]
+readme = "README.md"
+description = "Device and custom ops extensions for vLLM."
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+requires-python = ">=3.9,<3.14"
+dynamic = [ "version" ]
+dependencies = [
+    "torch==2.7.1",
+]
+
+[project.urls]
+Homepage="https://github.com/vllm-project/vllm/kernels"
+Documentation="https://docs.vllm.ai/en/latest/"
+Slack="https://slack.vllm.ai/"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["vllm*"]
+# include = [
+#     "vllm._C",
+#     "vllm._moe_C",
+#     "vllm._rocm_C",
+#     "vllm._flashmla_C",
+#     "vllm.vllm_flash_attn",
+#     "vllm.vllm_flash_attn._vllm_fa2_C",
+#     "vllm.vllm_flash_attn._vllm_fa3_C",
+#     "vllm.cumem_allocator"
+# ]
