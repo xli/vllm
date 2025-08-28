@@ -46,3 +46,10 @@ Slack="https://slack.vllm.ai/"
 where = ["."]
 include = ["vllm_kernels*"]
 namespaces = true
+
+[tool.setuptools_scm]
+# no extra settings needed, presence enables setuptools-scm
+
+[tool.ruff]
+# Allow lines to be as long as 80.
+line-length = 80

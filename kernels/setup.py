@@ -420,6 +420,12 @@ if _build_custom_ops():
 
 assert ext_modules, "No extensions to build"
 
+package_data = {
+    "vllm": [
+        "py.typed",
+    ]
+}
+
 setup(
     # static metadata should rather go in pyproject.toml
     version=get_version_with_target_device(),
@@ -427,4 +433,5 @@ setup(
     cmdclass={
         "build_ext": cmake_build_ext
     },
+    package_data=package_data,
 )
