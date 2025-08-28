@@ -31,13 +31,14 @@ def _alias_modules(package_to_scan, new_parent_name):
         if new_module_name in sys.modules:
             logger.info("do nothing for %s, because %s exists in sys.modules", module_name, new_module_name)
             continue
-        logger.info("alias module: %s -> %s", module_name, new_module_name)
+        logger.info("alias module: %s -> %s", new_module_name, module_name)
         sys.modules[new_module_name] = original_module
         setattr(sys.modules[new_parent_name], short_name, original_module)
 
 try:
     import vllm_kernels
-
-    _alias_modules(vllm_kernels, "vllm")
 except ImportError as e:
-    logger.info("Ignored import vllm_kernels error: %s", e, exc_info=True, stack_info=True)
+    logger.debug(str(e), exc_info=True)
+else:
+    logger.info("Found vllm_kernels, importing modules")
+    _alias_modules(vllm_kernels, "vllm")

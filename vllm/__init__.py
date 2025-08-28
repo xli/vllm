@@ -68,7 +68,7 @@ else:
                 f'module {__package__} has no attribute {name}')
 
 
-# Import the kernels' modules
+# Import vllm-kernels' modules
 import vllm.kernels  # noqa: F401
 
 __all__ = [

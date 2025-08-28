@@ -36,5 +36,6 @@ serve:
 test:
 	python -c "import vllm._C as c; import vllm.vllm_flash_attn as f; print(c.__file__, f.is_fa_version_supported(3))"
 
+request: port=8000
 request:
 	curl -X POST http://localhost:$(port)/v1/chat/completions -H "Content-Type: application/json" -d '{"messages": [{"role": "user", "content": "Hello, vLLM!"}],"max_tokens": 100}' | jq .
