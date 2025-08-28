@@ -30,7 +30,7 @@ endif()
 
 if(VLLM_FLASH_ATTN_SRC_DIR)
   FetchContent_Declare(
-          vllm-flash-attn SOURCE_DIR 
+          vllm-flash-attn SOURCE_DIR
           ${VLLM_FLASH_ATTN_SRC_DIR}
           BINARY_DIR ${CMAKE_BINARY_DIR}/vllm-flash-attn
   )
@@ -70,14 +70,14 @@ install(CODE "set(CMAKE_INSTALL_LOCAL_ONLY TRUE)" ALL_COMPONENTS)
 # case only one is built, in the case both are built redundant work is done)
 install(
   DIRECTORY ${vllm-flash-attn_SOURCE_DIR}/vllm_flash_attn/
-  DESTINATION vllm/vllm_flash_attn
+  DESTINATION ${BUILD_DESTINATION}/vllm_flash_attn
   COMPONENT _vllm_fa2_C
   FILES_MATCHING PATTERN "*.py"
 )
 
 install(
   DIRECTORY ${vllm-flash-attn_SOURCE_DIR}/vllm_flash_attn/
-  DESTINATION vllm/vllm_flash_attn
+  DESTINATION ${BUILD_DESTINATION}/vllm_flash_attn
   COMPONENT _vllm_fa3_C
   FILES_MATCHING PATTERN "*.py"
 )

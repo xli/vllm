@@ -68,6 +68,9 @@ else:
                 f'module {__package__} has no attribute {name}')
 
 
+# Import the kernels' modules
+import vllm.kernels  # noqa: F401
+
 __all__ = [
     "__version__",
     "__version_tuple__",

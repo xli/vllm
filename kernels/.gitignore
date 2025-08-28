@@ -1,2 +1,2 @@
 # vllm-flash-attn built from source
-vllm/vllm_flash_attn
+vllm_kernels/vllm_flash_attn

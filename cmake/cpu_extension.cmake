@@ -137,11 +137,11 @@ if (AVX512_FOUND AND NOT AVX512_DISABLED)
         set(ENABLE_AVX512VNNI OFF)
         message(WARNING "Disable AVX512-VNNI ISA support, no avx512_vnni found in local CPU flags." " If cross-compilation is required, please set env VLLM_CPU_AVX512VNNI=1.")
     endif()
-    
+
 elseif (AVX2_FOUND)
     list(APPEND CXX_COMPILE_FLAGS "-mavx2")
     message(WARNING "vLLM CPU backend using AVX2 ISA")
-    
+
 elseif (POWER9_FOUND OR POWER10_FOUND OR POWER11_FOUND)
     message(STATUS "PowerPC detected")
     if (POWER9_FOUND)
@@ -164,9 +164,9 @@ elseif (ASIMD_FOUND)
         add_compile_definitions(ARM_BF16_SUPPORT)
     else()
         message(WARNING "BF16 functionality is not available")
-        set(MARCH_FLAGS "-march=armv8.2-a+dotprod+fp16")  
+        set(MARCH_FLAGS "-march=armv8.2-a+dotprod+fp16")
     endif()
-    list(APPEND CXX_COMPILE_FLAGS ${MARCH_FLAGS})     
+    list(APPEND CXX_COMPILE_FLAGS ${MARCH_FLAGS})
 elseif (S390_FOUND)
     message(STATUS "S390 detected")
     # Check for S390 VXE support
@@ -289,7 +289,7 @@ message(STATUS "CPU extension source files: ${VLLM_EXT_SRC}")
 
 define_gpu_extension_target(
     _C
-    DESTINATION vllm
+    DESTINATION ${BUILD_DESTINATION}
     LANGUAGE CXX
     SOURCES ${VLLM_EXT_SRC}
     LIBRARIES ${LIBS}

@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
 VLLM_USE_PRECOMPILED = os.getenv("VLLM_USE_PRECOMPILED", None)
 VLLM_TARGET_DEVICE = os.getenv("VLLM_TARGET_DEVICE", "cuda")
 MAIN_CUDA_VERSION = "12.8"
+PKG_NAME = "vllm_kernels"
 
 
 def is_sccache_available() -> bool:
@@ -114,6 +115,7 @@ class cmake_build_ext(build_ext):
         cmake_args = [
             '-DCMAKE_BUILD_TYPE={}'.format(cfg),
             '-DVLLM_TARGET_DEVICE={}'.format(VLLM_TARGET_DEVICE),
+            '-DBUILD_DESTINATION={}'.format(PKG_NAME),
         ]
 
         verbose = os.getenv("VERBOSE")
@@ -189,7 +191,7 @@ class cmake_build_ext(build_ext):
         targets = []
 
         def target_name(s: str) -> str:
-            return s.removeprefix("vllm.").removeprefix("vllm_flash_attn.")
+            return s.removeprefix(f"{PKG_NAME}.").removeprefix("vllm_flash_attn.")
 
         # Build all the extensions
         for ext in self.extensions:
@@ -227,22 +229,23 @@ class cmake_build_ext(build_ext):
                 "cmake", "--install", ".", "--prefix", prefix, "--component",
                 target_name(ext.name)
             ]
+            print(f"Installing {ext.name} by {install_args} in {self.build_temp}")
             subprocess.check_call(install_args, cwd=self.build_temp)
 
     def run(self):
-        os.makedirs(os.path.join("vllm", "vllm_flash_attn"), exist_ok=True)
+        #os.makedirs(os.path.join(PKG_NAME, "vllm_flash_attn"), exist_ok=True)
         # First, run the standard build_ext command to compile the extensions
         super().run()
 
-        # copy vllm/vllm_flash_attn/**/*.py from self.build_lib to current
+        # copy vllm_kernels/vllm_flash_attn/**/*.py from self.build_lib to current
         # directory so that they can be included in the editable build
         import glob
-        files = glob.glob(os.path.join(self.build_lib, "vllm",
+        files = glob.glob(os.path.join(self.build_lib, PKG_NAME,
                                        "vllm_flash_attn", "**", "*.py"),
                           recursive=True)
         for file in files:
-            dst_file = os.path.join("vllm/vllm_flash_attn",
-                                    file.split("vllm/vllm_flash_attn/")[-1])
+            dst_file = os.path.join(f"{PKG_NAME}/vllm_flash_attn",
+                                    file.split(f"{PKG_NAME}/vllm_flash_attn/")[-1])
             print(f"Copying {file} to {dst_file}")
             os.makedirs(os.path.dirname(dst_file), exist_ok=True)
             self.copy_file(file, dst_file)
@@ -396,25 +399,25 @@ def get_version_with_target_device() -> str:
 ext_modules = []
 
 if _is_cuda() or _is_hip():
-    ext_modules.append(CMakeExtension(name="vllm._moe_C"))
+    ext_modules.append(CMakeExtension(name=f"{PKG_NAME}._moe_C"))
 
 if _is_hip():
-    ext_modules.append(CMakeExtension(name="vllm._rocm_C"))
+    ext_modules.append(CMakeExtension(name=f"{PKG_NAME}._rocm_C"))
 
 if _is_cuda():
-    ext_modules.append(CMakeExtension(name="vllm.vllm_flash_attn._vllm_fa2_C"))
+    ext_modules.append(CMakeExtension(name=f"{PKG_NAME}.vllm_flash_attn._vllm_fa2_C"))
     if get_nvcc_cuda_version() >= Version("12.3"):
         # FA3 requires CUDA 12.3 or later
         ext_modules.append(
-            CMakeExtension(name="vllm.vllm_flash_attn._vllm_fa3_C"))
+            CMakeExtension(name=f"{PKG_NAME}.vllm_flash_attn._vllm_fa3_C"))
         # Optional since this doesn't get built (produce an .so file) when
         # not targeting a hopper system
         ext_modules.append(
-            CMakeExtension(name="vllm._flashmla_C", optional=True))
-    ext_modules.append(CMakeExtension(name="vllm.cumem_allocator"))
+            CMakeExtension(name=f"{PKG_NAME}._flashmla_C", optional=True))
+    ext_modules.append(CMakeExtension(name=f"{PKG_NAME}.cumem_allocator"))
 
 if _build_custom_ops():
-    ext_modules.append(CMakeExtension(name="vllm._C"))
+    ext_modules.append(CMakeExtension(name=f"{PKG_NAME}._C"))
 
 assert ext_modules, "No extensions to build"
 
