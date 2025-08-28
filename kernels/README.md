@@ -22,21 +22,29 @@ vllm:
 
 ## Adoption Plan
 
-* refactoring: remove vllm/vllm_flash_attn for creating alias vllm.vllm_flash_attn => vllm_kernels.vllm_flash_attn
-    * existing build process (build vllm with exts or precompile exts) should work as usual.
 * refactoring: add build_destination to cmake files, so that we can customize build destination in vllm_kernels/setup.py
-* create kernels directory for build new vllm-kernels package: this change only adds new package building process without changing anything existing
+* create kernels directory for build new vllm-kernels package: this change adds new package building process without changing existing vllm package build
 	* the directories / files that are duplicated with the ones under vllm will be using symbol links
-	* in this change, we can install them separately by:
-		* build vllm-kernels wheel
-		* build vllm wheel with VLLM_TARGET_DEVICE=empty
+	* in this change, we can build and install vllm and vllm-kernels separately in vllm/kernels directory:
+		* install vllm-kernels: uv pip install -v --editable .
+		* install vllm package without extensions: cd .. && VLLM_TARGET_DEVICE=empty pip install -v --editable .
+        * similarly, we can build wheels for them separately and install them.
 	* for kernels development, new workflow works:
-		* make install-dev: installs both vllm-kernels and vllm as dev package (by pip install --editable .)
+		*
 * add CI build and release new vllm-kernels package.
-    * vllm-kernels will start with using same version number with vllm package, so that it is easy to identify same version packages.
+    * There are couple options for versioning vllm-kernels package, choosing to use same version number with vllm package for simplicity
     * make a release for v0.10.1.1
     * Ideally, vllm-kernels package should be backward compatible with vllm package.
     * Add compatiability test in CI, make sure vllm-kernels is backward compatible with vllm starting from v0.10.1.1
+        * this can be complex, may need to test different hardware and feature combinations
+        * we can start with locking vllm and vllm-kernels to use same version
+* setup nightly build vllm-kernels package, switch VLLM_USE_PRECOMPILED to use vllm-kernels nightly build
+    * probably can change to:
+        * when install vllm from source (pip install -e .), we pick the vllm-kernels version like VLLM_USE_PRECOMPILED does
+        * when install vllm from pypi (pip install vllm), it picks the dependency version packaged in the wheel.
+    * to install vllm-kernels and vllm at same version without cache:
+        * build wheels separately at same version and install them.
 * Move kernels tests into kernels directory
 * Once new vllm-kernels package is released, update vllm package to only package python code, equivalent to build the vllm package with VLLM_TARGET_DEVICE=empty
-	* Also remove cmake and csrc symbol links in the kernels dir, and move directories into kernels dir
+	* Remove cmake and csrc symbol links in the kernels dir, and move directories into kernels dir
+    * update vllm/setup.py to package python code only

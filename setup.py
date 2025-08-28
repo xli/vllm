@@ -266,7 +266,6 @@ class cmake_build_ext(build_ext):
             subprocess.check_call(install_args, cwd=self.build_temp)
 
     def run(self):
-        os.makedirs(os.path.join("vllm", "vllm_flash_attn"), exist_ok=True)
         # First, run the standard build_ext command to compile the extensions
         super().run()
 
