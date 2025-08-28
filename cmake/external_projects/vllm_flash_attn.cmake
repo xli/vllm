@@ -9,8 +9,6 @@ if(VLLM_GPU_LANG STREQUAL "CUDA")
   endforeach()
 endif()
 
-message(STATUS "Build destination in vllm flash attn: ${BUILD_DESTINATION}, CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
-
 #
 # Build vLLM flash attention from source
 #
