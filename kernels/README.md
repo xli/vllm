@@ -8,17 +8,18 @@ Made up of vLLM kernels + custom ops + C extension dependencies like vllm-flash-
 * vllm/kernels.py imports vllm_kernels package and creates alias modules to keep backward compatible, e.g. vllm.\_C => vllm_kernels.\_C
     * Ignores import error before we release a new version of vllm that is depending on vllm_kernels package
     * Won't overwrite module if the module exists.
-* vllm_kernels is a namespace package for future extension: allow vendor managed package to install new vllm_kernels module.
+* vllm_kernels is a namespace package (no `__init__.py`) for future extension: allow vendor managed package to install new vllm_kernels module.
 
-## New directory structure
+## Directory structure
 
-vllm:
-    - vllm: vllm engine python code
-    - pyproject.toml: vllm package
-    - kernels
-        - pyproject.toml: vllm-kernels package
-        - csrc: C extension source code
-
+* vllm:
+    * kernels
+        * pyproject.toml: vllm-kernels package
+        * setup.py
+        * csrc: C extension source code
+        * cmake
+        * CMakeLists.txt
+        * vllm_kernels: dir required for building extensions
 
 ## Adoption Plan
 
