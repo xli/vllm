@@ -16,7 +16,7 @@ build-backend = "setuptools.build_meta"
 name = "vllm-kernels"
 authors = [{name = "vLLM Team"}]
 license = "Apache-2.0"
-license-files = ["./../LICENSE"]
+license-files = ["LICENSE"]
 readme = "README.md"
 description = "Device and custom ops extensions for vLLM."
 classifiers = [

@@ -15,6 +15,7 @@ project(vllm_extensions LANGUAGES CXX)
 
 # vllm by default, can be overridden by using -DBUILD_DESTINATION=... (used by setup.py)
 set(BUILD_DESTINATION "vllm" CACHE STRING "build destiation")
+message(STATUS "Build destination: ${BUILD_DESTINATION}")
 
 # CUDA by default, can be overridden by using -DVLLM_TARGET_DEVICE=... (used by setup.py)
 set(VLLM_TARGET_DEVICE "cuda" CACHE STRING "Target device backend for vLLM")

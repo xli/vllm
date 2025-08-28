@@ -9,6 +9,8 @@ if(VLLM_GPU_LANG STREQUAL "CUDA")
   endforeach()
 endif()
 
+message(STATUS "Build destination in vllm flash attn: ${BUILD_DESTINATION}, CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
+
 #
 # Build vLLM flash attention from source
 #
@@ -46,17 +48,17 @@ else()
 endif()
 
 
-# Ensure the vllm/vllm_flash_attn directory exists before installation
-install(CODE "file(MAKE_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/vllm/vllm_flash_attn\")" ALL_COMPONENTS)
+# Ensure the ${BUILD_DESTINATION}/vllm_flash_attn directory exists before installation
+install(CODE "file(MAKE_DIRECTORY \"\${CMAKE_INSTALL_PREFIX}/${BUILD_DESTINATION}/vllm_flash_attn\")" ALL_COMPONENTS)
 
-# Make sure vllm-flash-attn install rules are nested under vllm/
+# Make sure vllm-flash-attn install rules are nested under ${BUILD_DESTINATION}/
 # This is here to support installing all components under the same prefix with cmake --install.
 # setup.py installs every component separately but uses the same prefix for all.
 # ALL_COMPONENTS is used to avoid duplication for FA2 and FA3,
 # and these statements don't hurt when installing neither component.
 install(CODE "set(CMAKE_INSTALL_LOCAL_ONLY FALSE)" ALL_COMPONENTS)
 install(CODE "set(OLD_CMAKE_INSTALL_PREFIX \"\${CMAKE_INSTALL_PREFIX}\")" ALL_COMPONENTS)
-install(CODE "set(CMAKE_INSTALL_PREFIX \"\${CMAKE_INSTALL_PREFIX}/vllm/\")" ALL_COMPONENTS)
+install(CODE "set(CMAKE_INSTALL_PREFIX \"\${CMAKE_INSTALL_PREFIX}/${BUILD_DESTINATION}/\")" ALL_COMPONENTS)
 
 # Fetch the vllm-flash-attn library
 FetchContent_MakeAvailable(vllm-flash-attn)

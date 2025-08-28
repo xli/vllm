@@ -16,7 +16,7 @@ dev-deps:
 	uv pip install -r ./../requirements/dev.txt
 
 install:
-	uv pip install -v --editable .
+	uv pip install -v --editable . 2>&1 | tee /tmp/ilx-install.log
 
 # install-build-deps:
 # 	uv pip install -r ./../requirements/build.txt
